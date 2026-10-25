@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+/*
+  Design tokens — AI Hospital Management System
+  Palette: clinical blue + near-white, deep navy for dark mode.
+  Accent: cyan reserved for AI-generated content only, so patients can
+  visually tell "this came from the AI layer" vs a human clinician.
+  Vital green / alert red are reserved strictly for health status signals.
+*/
+:root {
+  --color-bg: #f4f8fc;
+  --color-bg-alt: #eaf1fa;
+  --color-surface: 255 255 255;
+  --color-surface-alpha: 0.6;
+  --color-border: 15 23 42;
+  --color-border-alpha: 0.08;
+
+  --color-text: #0b1526;
+  --color-text-muted: #4b5c72;
+
+  --color-primary: #1554d6;
+  --color-primary-dark: #0e3ea3;
+  --color-primary-light: #4c86f4;
+
+  --color-accent: #06b6d4;
+  --color-accent-dark: #0891b2;
+
+  --color-vital: #10b981;
+  --color-alert: #e6483a;
+  --color-warn: #f59e0b;
+
+  /*
+    NOTE: In production (Vercel etc. with normal internet access), swap these
+    for next/font/google — Sora (display), Inter (body), IBM Plex Mono (data) —
+    by re-adding the font imports in layout.tsx. Google Fonts' CDN isn't
+    reachable from this build sandbox, so we fall back to a close-matching
+    system stack here so the app still builds and looks intentional.
+  */
+  --font-display: "Segoe UI Semibold", "Avenir Next", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-body: -apple-system, "Segoe UI", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-data: "SFMono-Regular", "Cascadia Code", "Consolas", ui-monospace, monospace;
+}
+
+.dark {
+  --color-bg: #060b16;
+  --color-bg-alt: #0a1120;
+  --color-surface: 12 20 36;
+  --color-surface-alpha: 0.55;
+  --color-border: 148 163 184;
+  --color-border-alpha: 0.12;
+
+  --color-text: #e7edf7;
+  --color-text-muted: #93a3bb;
+
+  --color-primary: #4c86f4;
+  --color-primary-dark: #3b6fe0;
+  --color-primary-light: #7ba7f7;
+
+  --color-accent: #22d3ee;
+  --color-accent-dark: #06b6d4;
+}
+
+@theme inline {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-data);
+}
+
+* {
+  border-color: rgb(var(--color-border) / var(--color-border-alpha));
+}
+
+body {
+  background:
+    radial-gradient(circle at 15% 0%, var(--color-bg-alt) 0%, transparent 45%),
+    radial-gradient(circle at 100% 20%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+    var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.font-data {
+  font-family: var(--font-data);
+}
+
+/* Signature glass surface used across every dashboard/card */
+.glass {
+  background: rgb(var(--color-surface) / var(--color-surface-alpha));
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgb(var(--color-border) / var(--color-border-alpha));
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+}
+
+.dark .glass {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.glass-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.glass-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgb(var(--color-border) / 0.18);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1);
+}
+
+/* Signature element: animated ECG / heartbeat trace used in header + loaders */
+.ekg-line {
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 340;
+  stroke-dashoffset: 340;
+  animation: ekg-draw 2.4s ease-in-out infinite;
+}
+@keyframes ekg-draw {
+  0% { stroke-dashoffset: 340; opacity: 0.3; }
+  50% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: -340; opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ekg-line { animation: none; stroke-dashoffset: 0; }
+  .glass-hover:hover { transform: none; }
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-border) / 0.2);
+  border-radius: 999px;
+}
